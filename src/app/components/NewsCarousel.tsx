@@ -223,7 +223,7 @@ export function NewsCarousel({ onNavigate }: NewsCarouselProps) {
                   email kampus Anda (@umm.ac.id).
                 </p>
               </div>
-              <div className="inline-flex items-center rounded-sm bg-white px-4 py-2 text-xs font-medium text-black transition-colors group-hover:bg-gray-200">
+              <div className="inline-flex items-center mt-2 rounded-sm bg-white px-8 py-2 text-xs font-medium text-black transition-colors group-hover:bg-gray-200">
                 Login Sekarang
               </div>
             </div>
@@ -261,7 +261,7 @@ export function NewsCarousel({ onNavigate }: NewsCarouselProps) {
                   barang mereka.
                 </p>
               </div>
-              <div className="inline-flex items-center rounded-sm bg-orange-500 px-4 py-2 text-xs font-medium text-white transition-colors group-hover:bg-orange-600">
+              <div className="inline-flex items-center mt-2 rounded-sm bg-orange-500 px-8 py-2 text-xs font-medium text-white transition-colors group-hover:bg-orange-600">
                 Daftar Akun Baru
               </div>
             </div>
