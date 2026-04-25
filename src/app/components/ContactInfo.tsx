@@ -1,0 +1,368 @@
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  MessageSquare,
+  Shield,
+  Users,
+  HelpCircle,
+} from "lucide-react";
+
+export function ContactInfo() {
+  const contactPoints = [
+    {
+      title: "Sekretariat & Keamanan Utama UMM",
+      location:
+        "Gedung Rektorat Kampus III, Lt. Ground, Jl. Raya Tlogomas 246",
+      phone: "+6282139706403", 
+      email: "sekun@umm.ac.id",
+      hours: "24 Jam (Keamanan) / 08:00 - 16:00 (Kantor)",
+      type: "primary",
+    },
+    {
+      title: "Biro Kemahasiswaan (BAK)",
+      location: "Gedung Rektorat Kampus III UMM Lt. 1",
+      phone: "+62341464318", 
+      email: "kemahasiswaan@umm.ac.id",
+      hours: "08:00 - 16:00",
+      type: "info",
+    },
+  ];
+
+  const faqs = [
+    {
+      question: "Bagaimana cara melaporkan barang hilang?",
+      answer:
+        'Gunakan form "Lapor Hilang" di website ini, atau datang langsung ke pusat informasi/security terdekat dengan membawa identitas.',
+    },
+    {
+      question: "Berapa lama barang disimpan jika ditemukan?",
+      answer:
+        "Barang ditemukan akan disimpan selama 3 bulan. Setelah itu akan didonasikan atau dimusnahkan sesuai kebijakan kampus.",
+    },
+    {
+      question:
+        "Apa yang harus saya bawa saat mengambil barang?",
+      answer:
+        "Bawa KTM/identitas diri dan bukti kepemilikan barang (foto, nota pembelian, atau deskripsi detail yang sesuai).",
+    },
+    {
+      question: "Bagaimana jika saya menemukan barang?",
+      answer:
+        'Serahkan segera ke security/pusat informasi terdekat dan laporkan melalui form "Lapor Temuan" di website ini.',
+    },
+  ];
+
+  const quickActions = [
+    {
+      title: "Lapor Kehilangan Darurat",
+      description:
+        "Untuk barang penting seperti KTM, SIM, atau dokumen",
+      icon: Shield,
+      action: "Hubungi Security",
+      urgent: true,
+    },
+    {
+      title: "Verifikasi Klaim Barang",
+      description:
+        "Konfirmasi kepemilikan barang yang ingin diambil",
+      icon: Users,
+      action: "Hubungi Admin",
+      urgent: false,
+    },
+    {
+      title: "Bantuan Teknis",
+      description:
+        "Masalah dengan website atau sistem pelaporan",
+      icon: HelpCircle,
+      action: "Hubungi IT Support",
+      urgent: false,
+    },
+  ];
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-semibold mb-2">
+          Kontak & Bantuan
+        </h1>
+        <p className="text-muted-foreground">
+          Hubungi kami untuk bantuan terkait barang hilang dan
+          ditemukan
+        </p>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {quickActions.map((action, index) => {
+          const Icon = action.icon;
+          return (
+            <Card
+              key={index}
+              className={
+                action.urgent ? "border-red-200 bg-red-50" : ""
+              }
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <div
+                    className={`p-2 rounded-lg ${action.urgent ? "bg-red-100" : "bg-blue-100"}`}
+                  >
+                    <Icon
+                      className={`w-5 h-5 ${action.urgent ? "text-red-600" : "text-blue-600"}`}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold mb-1">
+                      {action.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      {action.description}
+                    </p>
+                    <Button
+                      size="sm"
+                      variant={
+                        action.urgent
+                          ? "destructive"
+                          : "default"
+                      }
+                      className="w-full"
+                    >
+                      {action.action}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Contact Points */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">
+          Kontak Langsung
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {contactPoints.map((contact, index) => (
+            <Card key={index}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">
+                    {contact.title}
+                  </CardTitle>
+                  <Badge
+                    variant={
+                      contact.type === "primary"
+                        ? "default"
+                        : "secondary"
+                    }
+                  >
+                    {contact.type === "primary" && "24/7"}
+                    {contact.type === "info" && "Info"}
+                    {contact.type === "faculty" && "Fakultas"}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center space-x-2 text-sm">
+                  <MapPin className="w-4 h-4 text-muted-foreground" />
+                  <span>{contact.location}</span>
+                </div>
+
+                <div className="flex items-center space-x-2 text-sm">
+                  <Phone className="w-4 h-4 text-muted-foreground" />
+                  <span>{contact.phone}</span>
+                </div>
+
+                <div className="flex items-center space-x-2 text-sm">
+                  <Mail className="w-4 h-4 text-muted-foreground" />
+                  <span>{contact.email}</span>
+                </div>
+
+                <div className="flex items-center space-x-2 text-sm">
+                  <Clock className="w-4 h-4 text-muted-foreground" />
+                  <span>{contact.hours}</span>
+                </div>
+
+                <div className="flex space-x-2 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                  >
+                    <Phone className="w-4 h-4 mr-1" />
+                    Telepon
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                  >
+                    <Mail className="w-4 h-4 mr-1" />
+                    Email
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Emergency Contact */}
+      <Card className="border-red-200 bg-red-50">
+        <CardHeader>
+          <CardTitle className="text-red-800 flex items-center">
+            <Shield className="w-5 h-5 mr-2" />
+            Kontak Darurat
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <p className="text-sm text-red-700">
+              Untuk kehilangan dokumen penting atau situasi
+              mendesak:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div className="flex items-center space-x-2">
+                <Phone className="w-4 h-4 text-red-600" />
+                <span className="font-semibold">
+                  Security UMM 24/7: +62341464318
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+              
+              </div>
+            </div>
+            <Button variant="destructive" size="sm">
+              <Phone className="w-4 h-4 mr-2" />
+              Hubungi Sekarang
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* FAQ */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">
+          Pertanyaan Umum
+        </h2>
+        <div className="space-y-4">
+          {faqs.map((faq, index) => (
+            <Card key={index}>
+              <CardContent className="p-4">
+                <h3 className="font-semibold mb-2">
+                  {faq.question}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {faq.answer}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Operational Hours */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Jam Operasional</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-semibold mb-3">
+                Hari Kerja (Senin - Jumat)
+              </h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Security Utama</span>
+                  <span className="font-medium">24 Jam</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Pusat Informasi</span>
+                  <span className="font-medium">
+                    08:00 - 17:00
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Security Fakultas</span>
+                  <span className="font-medium">
+                    08:00 - 20:00
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-3">
+                Akhir Pekan (Sabtu - Minggu)
+              </h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Security Utama</span>
+                  <span className="font-medium">24 Jam</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Pusat Informasi</span>
+                  <span className="font-medium text-red-600">
+                    Tutup
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Security Fakultas</span>
+                  <span className="font-medium">
+                    08:00 - 15:00
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Location Map */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Lokasi Kampus</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="bg-muted rounded-lg h-48 flex items-center justify-center">
+              <div className="text-center text-muted-foreground">
+                <MapPin className="w-12 h-12 mx-auto mb-2" />
+                <p>
+                  Peta Lokasi Kampus Universitas Muhammadiyah
+                  Malang
+                </p>
+                <p className="text-sm">
+                  Jl. Raya Tlogomas No.246, Malang, Jawa Timur
+                  65144
+                </p>
+              </div>
+            </div>
+            <div className="flex space-x-2">
+              <Button variant="outline" className="flex-1">
+                <MapPin className="w-4 h-4 mr-2" />
+                Buka Google Maps
+              </Button>
+              <Button variant="outline" className="flex-1">
+                Petunjuk Arah
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
