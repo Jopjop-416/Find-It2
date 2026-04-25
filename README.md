@@ -1,16 +1,4 @@
 
-  # Lost and Found Website (Community) (Copy)
-
-  This is a code bundle for Lost and Found Website (Community) (Copy). The original project is available at https://www.figma.com/design/b9FFOdPJ2t8uwRX5OsUACm/Lost-and-Found-Website--Community---Copy-.
-
-  ## Running the code
-
-  Run `npm i` to install the dependencies.
-
-  Run `npm run dev` to start the development server.
-  
-  ---
-
   ## Pengujian Aplikasi — Daily Project 6
 
   Berikut adalah tabel pengujian aplikasi berdasarkan aspek kualitas yang ditentukan pada desain Daily Project 6. Setiap baris adalah satu kasus uji: deskripsi singkat, langkah pengujian, hasil yang diharapkan, kolom Pass/Fail untuk diisi saat pengujian, dan catatan.
@@ -29,9 +17,5 @@
   | Aksesibilitas | Label dan fokus (keyboard) | 1) Tab melalui halaman. 2) Periksa fokus pada input, tombol, dialog. | Fokus terlihat, label tersedia, dialog dapat ditutup via keyboard (Esc). | Pass (partial) | Form menggunakan `Label` dan atribut `htmlFor`; beberapa komponen perlu pengujian keyboard tambahan (modal/dialog focus trap).
   | Maintainability | Build & lint check | 1) Jalankan `npm run build` dan linter (jika tersedia). 2) Catat kesalahan/warning. | Build sukses tanpa error build; linter memberikan referensi (warning boleh). | Pass | `npm run build` sukses (tanpa error). Tidak ada lint script tersisa di `package.json` (atau belum dijalankan) — linting tidak diuji di sini.
 
-  Petunjuk pengisian: kolom "Pass / Fail" dan "Catatan" diisi oleh tim penguji saat menjalankan skenario. Anda dapat menambahkan baris baru untuk kasus uji tambahan yang spesifik.
 
-  Jika Anda ingin, saya bisa:
-  - Mengubah tabel menjadi file terpisah `README_TESTING.md`.
-  - Menambahkan template checklist untuk hasil pengujian otomatis/manual.
   
