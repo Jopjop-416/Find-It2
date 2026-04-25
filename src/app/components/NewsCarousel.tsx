@@ -1,6 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  LogIn,
+  UserPlus,
+} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { Card } from "./ui/card";
+import loginCover from "figma:asset/2412be6deea607ec6f8ef7e655eb41ff2289957e.png";
+import registerCover from "figma:asset/6e0302b470dfeaee72f713a6f32bccb12ae8fd58.png";
+
+interface NewsCarouselProps {
+  onNavigate?: (view: string) => void;
+}
 
 const newsData = [
   {
@@ -37,7 +49,7 @@ const newsData = [
   },
 ];
 
-export function NewsCarousel() {
+export function NewsCarousel({ onNavigate }: NewsCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -180,46 +192,81 @@ export function NewsCarousel() {
 
       {/* Login CTA Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-        {/* Login Card (Warna Hitam) */}
-        <div className="bg-black rounded-md p-8 md:p-10 text-white flex flex-col">
-          <h2 className="text-xl md:text-3xl font-semibold mb-3">
-            <span className="text-white">login </span>
-            <span className="text-orange-500">Sekarang</span>
-          </h2>
-          <p className="text-white/90 text-sm md:text-md mb-6 leading-relaxed">
-            Silahkan login terlebih dahulu untuk dapat
-            melaporkan barang hilang atau menemukan barang yang
-            hilang di lingkungan kampus. Gunakan akun email
-            kampus Anda (@umm.ac.id).
-          </p>
+        <Card
+          className="overflow-hidden relative h-80 rounded-md cursor-pointer group"
+          onClick={() => onNavigate?.("login")}
+        >
+          <img
+            src={loginCover}
+            alt="Login Sekarang"
+            className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors duration-300" />
+          <div className="absolute top-4 left-4">
+            <div className="bg-white rounded-sm p-2">
+              <LogIn className="w-5 h-5 text-black" />
+            </div>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/65 to-transparent p-6">
+            <div className="space-y-3">
+              <div>
+                <p className="text-white/80 text-xs mb-1">
+                  Login Sekarang
+                </p>
+                <h3 className="text-white font-semibold mb-2 text-lg">
+                  Login Terlebih Dahulu
+                </h3>
+                <p className="text-white/90 text-xs leading-relaxed max-w-md">
+                  Silahkan login terlebih dahulu untuk dapat
+                  melaporkan barang hilang atau menemukan barang
+                  yang hilang di lingkungan kampus. Gunakan akun
+                  email kampus Anda (@umm.ac.id).
+                </p>
+              </div>
+              <div className="inline-flex items-center rounded-sm bg-white px-4 py-2 text-xs font-medium text-black transition-colors group-hover:bg-gray-200">
+                Login Sekarang
+              </div>
+            </div>
+          </div>
+        </Card>
 
-          <a
-            href="/login"
-            className="mt-auto w-fit text-xs inline-block bg-white text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
-          >
-            Login Sekarang
-          </a>
-        </div>
-
-        {/* Sign Up Card (Pengganti Image Card - Warna Oranye) */}
-        <div className="bg-orange-500 rounded-md p-8 md:p-10 text-white flex flex-col">
-          <h2 className="text-xl md:text-3xl font-semibold mb-3">
-            Belum Punya{" "}
-            <span className="text-black">Akun?</span>
-          </h2>
-          <p className="text-white/90 text-sm md:text-md mb-6 leading-relaxed">
-            Jangan khawatir! Daftarkan diri Anda segera untuk
-            mulai menggunakan fitur lengkap kami dalam membantu
-            sesama warga kampus menemukan barang mereka.
-          </p>
-
-          <a
-            href="/signup"
-            className="mt-auto w-fit text-xs inline-block bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors shadow-lg"
-          >
-            Daftar Akun Baru
-          </a>
-        </div>
+        <Card
+          className="overflow-hidden relative h-80 rounded-md cursor-pointer group"
+          onClick={() => onNavigate?.("register")}
+        >
+          <img
+            src={registerCover}
+            alt="Daftar Akun Baru"
+            className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300" />
+          <div className="absolute top-4 left-4">
+            <div className="bg-white rounded-sm p-2">
+              <UserPlus className="w-5 h-5 text-black" />
+            </div>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/65 to-transparent p-6">
+            <div className="space-y-3">
+              <div>
+                <p className="text-white/80 text-xs mb-1">
+                  Belum Punya Akun?
+                </p>
+                <h3 className="text-white font-semibold mb-2 text-lg">
+                  Daftar Akun Baru
+                </h3>
+                <p className="text-white/90 text-xs leading-relaxed max-w-md">
+                  Jangan khawatir! Daftarkan diri Anda segera
+                  untuk mulai menggunakan fitur lengkap kami
+                  dalam membantu sesama warga kampus menemukan
+                  barang mereka.
+                </p>
+              </div>
+              <div className="inline-flex items-center rounded-sm bg-orange-500 px-4 py-2 text-xs font-medium text-white transition-colors group-hover:bg-orange-600">
+                Daftar Akun Baru
+              </div>
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   );

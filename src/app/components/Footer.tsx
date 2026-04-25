@@ -5,19 +5,19 @@ import foundItLogo from "figma:asset/logo2.png";
 export function Footer() {
   return (
     <footer className="bg-black text-white mt-16 w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:items-start">
           {/* About Section */}
           <div>
             <img
               src={foundItLogo}
               alt="Found It Logo"
-              className="h-5 w-auto object-contain mb-6"
+              className="h-5 w-auto object-contain mb-9"
             />
             <h3 className="text-lg font-semibold text-orange-500 mb-4">
               Lost & Found UMM
             </h3>
-            <p className="text-sm text-gray-300 leading-relaxed">
+            <p className="text-sm text-gray-300 leading-relaxed text-justify">
               Platform digital untuk membantu mahasiswa dan civitas akademika
               menemukan atau melaporkan barang hilang dan ditemukan di
               lingkungan Universitas Muhammadiyah Malang.
@@ -25,7 +25,7 @@ export function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div className="md:pt-14">
+          <div className="md:pt-14 md:ml-17">
             <h3 className="text-lg font-semibold text-orange-500 mb-4">
               Menu Cepat
             </h3>
@@ -104,7 +104,7 @@ export function Footer() {
             <p className="text-sm text-gray-300">
               Ikuti kami di media sosial untuk update terbaru
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 mt-8">
               <a
                 href="https://facebook.com/universitasmuhamadiyahmalang"
                 target="_blank"

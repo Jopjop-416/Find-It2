@@ -363,7 +363,7 @@ export default function App() {
                 <Button
                   variant="outline"
                   onClick={() => setCurrentView('login')}
-                  className="text-xs ml-2 border-orange-500 text-orange-600 hover:bg-orange-50"
+                  className="text-xs ml-2 bg-orange-600 text-white hover:bg-black hover:text-white"
                 >
                   <LogIn className="w-3 h-3 mr-1" />
                   Login

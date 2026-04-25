@@ -397,7 +397,7 @@ export function Dashboard({
       </div>
 
       {/* Quick Tips */}
-      <NewsCarousel />
+      <NewsCarousel onNavigate={onNavigate} />
       <Footer />
     </div>
   );
