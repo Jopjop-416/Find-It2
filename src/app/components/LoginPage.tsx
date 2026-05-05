@@ -5,9 +5,10 @@ import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import foundItLogo from "figma:asset/6e20ff767bc819bcb65b83fac10d99d01f0c4fd8.png";
 import ummCampusImage from "../../imports/umm1.png";
+import { getStoredUser, isPasswordMatch } from "../appState";
 
 interface LoginPageProps {
-  onLoginSuccess?: (email?: string) => void;
+  onLoginSuccess?: (email?: string) => void | Promise<void>;
   onSwitchToRegister?: () => void;
 }
 
@@ -16,16 +17,19 @@ export function LoginPage({ onLoginSuccess, onSwitchToRegister }: LoginPageProps
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !password) return;
 
-    const savedUser = localStorage.getItem("registeredUser");
-    const registeredUser = savedUser ? JSON.parse(savedUser) : null;
+    const registeredUser = getStoredUser();
 
     const isRegisteredUser =
-      registeredUser?.email === email && registeredUser?.password === password;
+      registeredUser?.email === email &&
+      (await isPasswordMatch(
+        password,
+        registeredUser.passwordHash || registeredUser.password,
+      ));
     const isDemoUser = email === "admin@gmail.com" && password === "password123";
 
     if (!isRegisteredUser && !isDemoUser) {
@@ -39,7 +43,7 @@ export function LoginPage({ onLoginSuccess, onSwitchToRegister }: LoginPageProps
       localStorage.removeItem("rememberedEmail");
     }
 
-    onLoginSuccess?.(email);
+    await onLoginSuccess?.(email);
   };
 
   return (

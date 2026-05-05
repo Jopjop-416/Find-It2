@@ -15,7 +15,7 @@ interface ProfilePageProps {
     avatar?: string;
   };
   onUpdateProfile: (data: { email: string; name: string; avatar?: string }) => void;
-  onChangePassword: (oldPassword: string, newPassword: string) => boolean;
+  onChangePassword: (oldPassword: string, newPassword: string) => boolean | Promise<boolean>;
   onDeleteAccount: (confirmation: string, email: string) => boolean;
 }
 
@@ -72,8 +72,8 @@ export function ProfilePage({ userData, onUpdateProfile, onChangePassword, onDel
     setShowToast(true);
   };
 
-  const handleChangePasswordSuccess = (oldPassword: string, newPassword: string) => {
-    const success = onChangePassword(oldPassword, newPassword);
+  const handleChangePasswordSuccess = async (oldPassword: string, newPassword: string) => {
+    const success = await onChangePassword(oldPassword, newPassword);
     if (success) {
       setToastMessage("Password berhasil diubah!");
       setShowToast(true);

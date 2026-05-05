@@ -5,6 +5,7 @@ import { Label } from "./ui/label";
 import { Toast } from "./ui/toast";
 import foundItLogo from "figma:asset/6e20ff767bc819bcb65b83fac10d99d01f0c4fd8.png";
 import ummCampusImage from "../../imports/umm1.png";
+import { createPasswordHash } from "../appState";
 
 interface RegisterPageProps {
   onRegisterSuccess?: () => void;
@@ -21,7 +22,7 @@ export function RegisterPage({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showToast, setShowToast] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const trimmedUsername = username.trim();
@@ -42,7 +43,7 @@ export function RegisterPage({
       JSON.stringify({
         email: trimmedEmail,
         username: trimmedUsername,
-        password,
+        passwordHash: await createPasswordHash(password),
       }),
     );
 

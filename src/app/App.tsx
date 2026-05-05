@@ -16,6 +16,13 @@ import { UserAvatar } from './components/UserAvatar';
 import { ProfilePage } from './components/ProfilePage';
 import { ImageWithFallback } from './components/figma/ImageWithFallback';
 import foundItLogo from 'figma:asset/6e20ff767bc819bcb65b83fac10d99d01f0c4fd8.png';
+import {
+  createPasswordHash,
+  getStoredUser,
+  isPasswordMatch,
+  parseStoredJson,
+  type UserData,
+} from './appState';
 
 const mockItemsData = [
     {
@@ -163,20 +170,24 @@ const mockNotifications = [
 
 export default function App() {
   const [currentView, setCurrentView] = useState('dashboard');
-  const [items, setItems] = useState(mockItemsData);
+  const [items, setItems] = useState(() =>
+    parseStoredJson(localStorage.getItem('items'), mockItemsData)
+  );
   const [notifications, setNotifications] = useState(() => {
-    const saved = localStorage.getItem('notifications');
-    return saved ? JSON.parse(saved) : [];
+    return parseStoredJson(localStorage.getItem('notifications'), mockNotifications);
   });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    const saved = localStorage.getItem('isLoggedIn');
-    return saved ? JSON.parse(saved) : false;
+    return parseStoredJson(localStorage.getItem('isLoggedIn'), false);
   });
-  const [userData, setUserData] = useState(() => {
-    const saved = localStorage.getItem('userData');
-    return saved ? JSON.parse(saved) : { email: '', name: '', avatar: '', password: '' };
-  });
+  const [userData, setUserData] = useState<UserData>(() =>
+    parseStoredJson(localStorage.getItem('userData'), {
+      email: '',
+      name: '',
+      avatar: '',
+      passwordHash: '',
+    })
+  );
 
   // Save to localStorage whenever userData or isLoggedIn changes
   useEffect(() => {
@@ -197,7 +208,7 @@ export default function App() {
       date: new Date().toISOString().split('T')[0],
       status: newItem.type === 'lost' ? 'active' : 'available'
     };
-    setItems([item, ...items]);
+    setItems((currentItems) => [item, ...currentItems]);
     
     // Add notification for successful submission
     const notification = {
@@ -207,11 +218,17 @@ export default function App() {
       date: new Date().toISOString().split('T')[0],
       read: false
     };
-    setNotifications([notification, ...notifications]);
+    setNotifications((currentNotifications) => [notification, ...currentNotifications]);
   };
 
   const updateItemStatus = (id: number, status: string) => {
-    setItems(items.map(item => 
+    if (!isLoggedIn) {
+      localStorage.setItem('redirectAfterLogin', currentView);
+      setCurrentView('login');
+      return;
+    }
+
+    setItems((currentItems) => currentItems.map(item =>
       item.id === id ? { ...item, status } : item
     ));
   };
@@ -230,7 +247,7 @@ export default function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setUserData({ email: '', name: '', avatar: '', password: '' });
+    setUserData({ email: '', name: '', avatar: '', passwordHash: '' });
     setCurrentView('dashboard');
   };
 
@@ -252,23 +269,35 @@ export default function App() {
       date: new Date().toISOString().split('T')[0],
       read: false
     };
-    setNotifications([notification, ...notifications]);
+    setNotifications((currentNotifications) => [notification, ...currentNotifications]);
   };
 
-  const handleChangePassword = (oldPassword: string, newPassword: string): boolean => {
-    // Check if old password matches (for demo, we check against stored password or default)
-    const storedPassword = userData.password || 'password123';
+  const handleChangePassword = async (oldPassword: string, newPassword: string): Promise<boolean> => {
+    const storedPassword = userData.passwordHash || userData.password;
 
-    if (oldPassword !== storedPassword) {
+    if (!(await isPasswordMatch(oldPassword, storedPassword))) {
       return false;
     }
 
-    // Update password
+    const passwordHash = await createPasswordHash(newPassword);
     const updatedData = {
       ...userData,
-      password: newPassword
+      passwordHash,
+      password: undefined
     };
     setUserData(updatedData);
+
+    const registeredUser = getStoredUser();
+    if (registeredUser?.email === userData.email) {
+      localStorage.setItem(
+        'registeredUser',
+        JSON.stringify({
+          email: registeredUser.email,
+          username: registeredUser.username,
+          passwordHash,
+        })
+      );
+    }
 
     // Add notification
     const notification = {
@@ -278,7 +307,7 @@ export default function App() {
       date: new Date().toISOString().split('T')[0],
       read: false
     };
-    setNotifications([notification, ...notifications]);
+    setNotifications((currentNotifications) => [notification, ...currentNotifications]);
 
     return true;
   };
@@ -291,10 +320,12 @@ export default function App() {
     // Clear all user data from localStorage
     localStorage.removeItem('userData');
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('registeredUser');
+    localStorage.removeItem('redirectAfterLogin');
 
     // Reset state
     setIsLoggedIn(false);
-    setUserData({ email: '', name: '', avatar: '', password: '' });
+    setUserData({ email: '', name: '', avatar: '', passwordHash: '' });
     setCurrentView('dashboard');
 
     // Add notification
@@ -305,7 +336,7 @@ export default function App() {
       date: new Date().toISOString().split('T')[0],
       read: false
     };
-    setNotifications([notification, ...notifications]);
+    setNotifications((currentNotifications) => [notification, ...currentNotifications]);
 
     return true;
   };
@@ -489,7 +520,12 @@ export default function App() {
       {/* Main Content */}
       <main className={currentView === 'login' || currentView === 'register' ? '' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'}>
         {currentView === 'dashboard' && (
-          <Dashboard items={items} onNavigate={setCurrentView} onUpdateStatus={updateItemStatus} />
+          <Dashboard
+            items={items}
+            onNavigate={setCurrentView}
+            onUpdateStatus={updateItemStatus}
+            canUpdateStatus={isLoggedIn}
+          />
         )}
 
         {currentView === 'report-lost' && (
@@ -515,7 +551,11 @@ export default function App() {
         )}
 
         {currentView === 'gallery' && (
-          <ItemGallery items={items} onUpdateStatus={updateItemStatus} />
+          <ItemGallery
+            items={items}
+            onUpdateStatus={updateItemStatus}
+            canUpdateStatus={isLoggedIn}
+          />
         )}
 
         {currentView === 'notifications' && (
@@ -532,17 +572,30 @@ export default function App() {
 
         {currentView === 'login' && (
           <LoginPage
-            onLoginSuccess={(email?: string) => {
-              const savedRegisteredUser = localStorage.getItem('registeredUser');
-              const registeredUser = savedRegisteredUser ? JSON.parse(savedRegisteredUser) : null;
+            onLoginSuccess={async (email?: string) => {
+              const registeredUser = getStoredUser();
               const isRegisteredUser = registeredUser?.email === email;
+              const passwordHash = isRegisteredUser
+                ? registeredUser.passwordHash || (registeredUser.password ? await createPasswordHash(registeredUser.password) : '')
+                : await createPasswordHash('password123');
+
+              if (isRegisteredUser && registeredUser.password) {
+                localStorage.setItem(
+                  'registeredUser',
+                  JSON.stringify({
+                    email: registeredUser.email,
+                    username: registeredUser.username,
+                    passwordHash,
+                  })
+                );
+              }
 
               setIsLoggedIn(true);
               setUserData({
                 email: email || 'admin@gmail.com',
                 name: isRegisteredUser ? registeredUser.username : 'Admin Dashboard',
                 avatar: '',
-                password: isRegisteredUser ? registeredUser.password : 'password123'
+                passwordHash,
               });
 
               // Check if there's a redirect after login

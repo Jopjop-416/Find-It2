@@ -31,11 +31,13 @@ import {
 interface ItemGalleryProps {
   items: any[];
   onUpdateStatus: (id: number, status: string) => void;
+  canUpdateStatus?: boolean;
 }
 
 export function ItemGallery({
   items,
   onUpdateStatus,
+  canUpdateStatus = false,
 }: ItemGalleryProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -377,7 +379,7 @@ export function ItemGallery({
                   </div>
                 </div>
 
-                {(item.status === "active" ||
+                {canUpdateStatus && (item.status === "active" ||
                   item.status === "available") && (
                   <div className="flex gap-2 pt-4 border-t">
                     {item.type === "lost" && (

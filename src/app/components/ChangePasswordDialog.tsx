@@ -14,7 +14,7 @@ import { Lock } from "lucide-react";
 interface ChangePasswordDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onChangePassword: (oldPassword: string, newPassword: string) => boolean;
+  onChangePassword: (oldPassword: string, newPassword: string) => boolean | Promise<boolean>;
 }
 
 export function ChangePasswordDialog({
@@ -27,7 +27,7 @@ export function ChangePasswordDialog({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -48,7 +48,7 @@ export function ChangePasswordDialog({
     }
 
     // Call parent function to change password
-    const success = onChangePassword(oldPassword, newPassword);
+    const success = await onChangePassword(oldPassword, newPassword);
 
     if (success) {
       // Reset form and close

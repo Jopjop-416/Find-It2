@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Toast } from './ui/toast';
 import { Eye, Upload, X, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from './ui/alert';
+import { parseStoredJson, validateReportData } from '../appState';
 
 interface ReportFoundFormProps {
   onSubmit: (item: any) => void;
@@ -17,26 +18,23 @@ interface ReportFoundFormProps {
 
 export function ReportFoundForm({ onSubmit, onRequireLogin, isLoggedIn }: ReportFoundFormProps) {
   const [formData, setFormData] = useState(() => {
-    // Load draft from localStorage
-    const draft = localStorage.getItem('reportFoundDraft');
-    return draft ? JSON.parse(draft) : {
+    return parseStoredJson(localStorage.getItem('reportFoundDraft'), {
       title: '',
       category: '',
       description: '',
       location: '',
       contact: '',
       image: ''
-    };
+    });
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [validationError, setValidationError] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(() => {
-    const draft = localStorage.getItem('reportFoundDraft');
-    if (draft) {
-      const parsed = JSON.parse(draft);
-      return parsed.image || null;
-    }
-    return null;
+    const draft = parseStoredJson(localStorage.getItem('reportFoundDraft'), {
+      image: '',
+    });
+    return draft.image || null;
   });
 
   // Save draft to localStorage whenever formData changes
@@ -76,6 +74,13 @@ export function ReportFoundForm({ onSubmit, onRequireLogin, isLoggedIn }: Report
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError('');
+
+    const validation = validateReportData(formData);
+    if (!validation.isValid) {
+      setValidationError(validation.message);
+      return;
+    }
 
     // Check if user is logged in
     if (!isLoggedIn) {
@@ -234,6 +239,13 @@ export function ReportFoundForm({ onSubmit, onRequireLogin, isLoggedIn }: Report
                 Digunakan untuk verifikasi dan konfirmasi penyerahan barang
               </p>
             </div>
+
+            {validationError && (
+              <Alert variant="destructive">
+                <MapPin className="h-4 w-4" />
+                <AlertDescription>{validationError}</AlertDescription>
+              </Alert>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="image">Foto Barang *</Label>

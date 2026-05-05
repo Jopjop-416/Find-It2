@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Toast } from './ui/toast';
 import { AlertTriangle, Upload, X } from 'lucide-react';
 import { Alert, AlertDescription } from './ui/alert';
+import { parseStoredJson, validateReportData } from '../appState';
 
 interface ReportLostFormProps {
   onSubmit: (item: any) => void;
@@ -17,26 +18,23 @@ interface ReportLostFormProps {
 
 export function ReportLostForm({ onSubmit, onRequireLogin, isLoggedIn }: ReportLostFormProps) {
   const [formData, setFormData] = useState(() => {
-    // Load draft from localStorage
-    const draft = localStorage.getItem('reportLostDraft');
-    return draft ? JSON.parse(draft) : {
+    return parseStoredJson(localStorage.getItem('reportLostDraft'), {
       title: '',
       category: '',
       description: '',
       location: '',
       contact: '',
       image: ''
-    };
+    });
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [validationError, setValidationError] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(() => {
-    const draft = localStorage.getItem('reportLostDraft');
-    if (draft) {
-      const parsed = JSON.parse(draft);
-      return parsed.image || null;
-    }
-    return null;
+    const draft = parseStoredJson(localStorage.getItem('reportLostDraft'), {
+      image: '',
+    });
+    return draft.image || null;
   });
 
   // Save draft to localStorage whenever formData changes
@@ -76,6 +74,13 @@ export function ReportLostForm({ onSubmit, onRequireLogin, isLoggedIn }: ReportL
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError('');
+
+    const validation = validateReportData(formData);
+    if (!validation.isValid) {
+      setValidationError(validation.message);
+      return;
+    }
 
     // Check if user is logged in
     if (!isLoggedIn) {
@@ -219,6 +224,13 @@ export function ReportLostForm({ onSubmit, onRequireLogin, isLoggedIn }: ReportL
                 </SelectContent>
               </Select>
             </div>
+
+            {validationError && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>{validationError}</AlertDescription>
+              </Alert>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="contact">Kontak yang Dapat Dihubungi *</Label>

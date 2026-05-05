@@ -34,12 +34,14 @@ interface DashboardProps {
   items: any[];
   onNavigate?: (view: string) => void;
   onUpdateStatus: (id: number, status: string) => void;
+  canUpdateStatus?: boolean;
 }
 
 export function Dashboard({
   items,
   onNavigate,
   onUpdateStatus,
+  canUpdateStatus = false,
 }: DashboardProps) {
   const lostItems = items.filter(
     (item) => item.type === "lost",
@@ -358,7 +360,7 @@ export function Dashboard({
                     </div>
                   </div>
 
-                  {(item.status === "active" ||
+                  {canUpdateStatus && (item.status === "active" ||
                     item.status === "available") && (
                     <div className="flex gap-2 pt-4 border-t">
                       {item.type === "lost" && (
